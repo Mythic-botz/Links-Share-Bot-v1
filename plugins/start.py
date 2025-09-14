@@ -405,7 +405,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         
         await query.edit_message_media(
             InputMediaPhoto(
-                "https://envs.sh/Wdj.jpg",
+                "https://graph.org/file/7a6693fa3f4546c5d250b-53d98f8f1a31b19e76.jpg",
                 ABOUT_TXT
             ),
             reply_markup=InlineKeyboardMarkup([
@@ -418,7 +418,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         user_link = f"https://t.me/{user.username}" if user.username else f"tg://openmessage?user_id={OWNER_ID}" 
         ownername = f"<a href={user_link}>{user.first_name}</a>" if user.first_name else f"<a href={user_link}>no name !</a>"
         await query.edit_message_media(
-            InputMediaPhoto("https://envs.sh/Wdj.jpg", 
+            InputMediaPhoto("https://graph.org/file/7a6693fa3f4546c5d250b-53d98f8f1a31b19e76.jpg", 
                             CHANNELS_TXT
             ),
             reply_markup=InlineKeyboardMarkup([
