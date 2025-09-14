@@ -16,7 +16,7 @@ from plugins.newpost import revoke_invite_after_5_minutes
 from helper_func import *
 
 # Start pic
-START_PIC_FILE_ID = "https://telegra.ph/file/f3d3aff9ec422158feb05-d2180e3665e0ac4d32.jpg"
+START_PIC_FILE_ID = "https://graph.org/file/7a6693fa3f4546c5d250b-53d98f8f1a31b19e76.jpg"
 
 user_banned_until = {}
 
