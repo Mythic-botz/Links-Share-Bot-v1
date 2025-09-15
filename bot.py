@@ -1,6 +1,7 @@
 import asyncio
 import sys
 import time
+import signal  # Added missing import
 from datetime import datetime
 from pyrogram import Client
 from pyrogram.enums import ParseMode
