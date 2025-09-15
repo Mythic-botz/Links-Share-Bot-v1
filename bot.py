@@ -1,6 +1,6 @@
-# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ # aNDI BANDI SANDI JISNE BHI CREDIT HATAYA USKI BANDI RAndi 
 import asyncio
 import sys
+import time
 from datetime import datetime
 from pyrogram import Client
 from pyrogram.enums import ParseMode
@@ -14,6 +14,11 @@ pyrogram.utils.MIN_CHANNEL_ID = -1009147483647
 name = """
 Links Sharing Started
 """
+
+# Flag to control restart loop
+RUNNING = True
+MAX_RESTART_ATTEMPTS = 3  # Maximum number of restart attempts
+RESTART_DELAY = 180  # Delay between restarts (3 minutes in seconds)
 
 class Bot(Client):
     def __init__(self):
@@ -65,5 +70,43 @@ class Bot(Client):
 is_canceled = False
 cancel_lock = asyncio.Lock()
 
+# Handle SIGTERM and SIGINT for graceful shutdown
+def handle_shutdown(signum, frame):
+    global RUNNING
+    LOGGER(__name__).info(f"Received signal {signum}, shutting down gracefully...")
+    RUNNING = False
+    sys.exit(0)  # Exit with 0 to allow Render to restart the container
+
+signal.signal(signal.SIGTERM, handle_shutdown)
+signal.signal(signal.SIGINT, handle_shutdown)
+
+# Main function to run the bot with restart logic
+def run_bot():
+    global RUNNING
+    restart_count = 0
+
+    while RUNNING and restart_count < MAX_RESTART_ATTEMPTS:
+        try:
+            LOGGER(__name__).info(f"Starting bot (Attempt {restart_count + 1}/{MAX_RESTART_ATTEMPTS})...")
+            bot = Bot()
+            bot.run()  # Blocks until the bot stops
+        except Exception as e:
+            LOGGER(__name__).error(f"Bot crashed with error: {e}. Attempting restart...")
+        finally:
+            LOGGER(__name__).info("Bot stopped.")
+        
+        if RUNNING and restart_count < MAX_RESTART_ATTEMPTS - 1:
+            restart_count += 1
+            LOGGER(__name__).info(f"Waiting {RESTART_DELAY} seconds before restart attempt {restart_count + 1}...")
+            time.sleep(RESTART_DELAY)
+        else:
+            LOGGER(__name__).info("Max restart attempts reached or bot stopped intentionally.")
+            break
+
+    if restart_count >= MAX_RESTART_ATTEMPTS:
+        LOGGER(__name__).error("Bot stopped after reaching maximum restart attempts.")
+    LOGGER(__name__).info("Bot has fully stopped.")
+    sys.exit(0)  # Exit to allow Render to restart the container
+
 if __name__ == "__main__":
-    Bot().run()
+    run_bot()
