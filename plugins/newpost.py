@@ -237,8 +237,9 @@ async def send_links_page(client, message, channels, page, edit=False):
     else:
         await message.reply(links_text, reply_markup=reply_markup)
 
-@Bot.on_callback_query(filters.regex(r"linkspage_(\d+)"))
+@Bot.on_callback_query(filters.regex(r"^linkspage_(\d+)$"))
 async def paginate_links(client, callback_query):
+    await callback_query.answer()  # stop the loader instantly
     page = int(callback_query.data.split("_")[1])
     channels = await get_channels()
     await send_links_page(client, callback_query.message, channels, page, edit=True)
